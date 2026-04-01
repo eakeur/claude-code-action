@@ -31,11 +31,30 @@ export async function checkAndCommitOrDeleteBranch(
       }
     }
 
+    // If the branch doesn't exist remotely, try pushing it from local
+    if (!branchExistsRemotely) {
+      try {
+        const localBranch =
+          await $`git rev-parse --verify ${claudeBranch}`.quiet();
+        if (localBranch.exitCode === 0) {
+          console.log(
+            `Branch ${claudeBranch} exists locally but not remotely, attempting to push...`,
+          );
+          await $`git push origin ${claudeBranch}`;
+          console.log(
+            `✅ Successfully pushed branch ${claudeBranch} to remote`,
+          );
+          branchExistsRemotely = true;
+        }
+      } catch {
+        console.log(
+          `Branch ${claudeBranch} does not exist locally or push failed, no branch link will be added`,
+        );
+      }
+    }
+
     // Only proceed if branch exists remotely
     if (!branchExistsRemotely) {
-      console.log(
-        `Branch ${claudeBranch} does not exist remotely, no branch link will be added`,
-      );
       return { shouldDeleteBranch: false, branchLink: "" };
     }
 
