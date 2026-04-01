@@ -286,8 +286,11 @@ export async function setupBranch(
     // Create and checkout the new branch from the source branch
     execGit(["checkout", "-b", newBranch]);
 
+    // Push the branch to remote immediately so it exists throughout execution
+    execGit(["push", "-u", "origin", newBranch]);
+
     console.log(
-      `Successfully created and checked out local branch: ${newBranch}`,
+      `Successfully created, checked out, and pushed branch: ${newBranch}`,
     );
 
     return {

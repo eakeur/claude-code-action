@@ -31,36 +31,11 @@ export async function checkAndCommitOrDeleteBranch(
       }
     }
 
-    // If the branch doesn't exist remotely, try pushing it from local
-    // Only push if the local branch has commits ahead of the base branch
-    if (!branchExistsRemotely) {
-      try {
-        const aheadCommits =
-          await $`git log ${baseBranch}..${claudeBranch} --oneline`.quiet();
-        const hasCommits = aheadCommits.stdout.toString().trim().length > 0;
-        if (hasCommits) {
-          console.log(
-            `Branch ${claudeBranch} exists locally with commits but not remotely, attempting to push...`,
-          );
-          await $`git push origin ${claudeBranch}`;
-          console.log(
-            `✅ Successfully pushed branch ${claudeBranch} to remote`,
-          );
-          branchExistsRemotely = true;
-        } else {
-          console.log(
-            `Branch ${claudeBranch} has no commits ahead of ${baseBranch}, skipping push`,
-          );
-        }
-      } catch {
-        console.log(
-          `Branch ${claudeBranch} does not exist locally or push failed, no branch link will be added`,
-        );
-      }
-    }
-
     // Only proceed if branch exists remotely
     if (!branchExistsRemotely) {
+      console.log(
+        `Branch ${claudeBranch} does not exist remotely, no branch link will be added`,
+      );
       return { shouldDeleteBranch: false, branchLink: "" };
     }
 
