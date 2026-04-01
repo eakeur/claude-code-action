@@ -181,7 +181,7 @@ describe("checkAndCommitOrDeleteBranch", () => {
       "Branch claude/issue-123-20240101-1234 does not exist remotely",
     );
     expect(consoleLogSpy).toHaveBeenCalledWith(
-      "Branch claude/issue-123-20240101-1234 does not exist locally or push failed, no branch link will be added",
+      "Branch claude/issue-123-20240101-1234 does not exist remotely, no branch link will be added",
     );
   });
 });
